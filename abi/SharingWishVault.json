@@ -282,6 +282,12 @@
             },
             {
                 "indexed": false,
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            },
+            {
+                "indexed": false,
                 "internalType": "string",
                 "name": "message",
                 "type": "string"

@@ -5,11 +5,11 @@ import { SharingWishVault } from "generated";
 
 SharingWishVault.EmergencyModeToggled.handler(async ({ event, context }) => {
   const entity = {
-    id: event.transactionHash,
+    id: event.transaction.hash + "-" + event.logIndex.toString(),  
     mode: event.params.mode,
-    timestamp: event.block.timestamp,
-    blockNumber: event.block.number,
-    transactionHash: event.transactionHash,
+    timestamp: BigInt(event.block.timestamp),
+    blockNumber: BigInt(event.block.number),
+    transactionHash: event.transaction.hash,
   };
 
   context.EmergencyMode.set(entity);
@@ -17,12 +17,12 @@ SharingWishVault.EmergencyModeToggled.handler(async ({ event, context }) => {
 
 SharingWishVault.OwnershipTransferred.handler(async ({ event, context }) => {
   const entity = {
-    id: event.transactionHash,
+    id: event.transaction.hash + "-" + event.logIndex.toString(),
     previousOwner: event.params.previousOwner,
     newOwner: event.params.newOwner,
-    timestamp: event.block.timestamp,
-    blockNumber: event.block.number,
-    transactionHash: event.transactionHash,
+    timestamp: BigInt(event.block.timestamp),
+    blockNumber: BigInt(event.block.number),
+    transactionHash: event.transaction.hash,
   };
 
   context.OwnershipTransfer.set(entity);
@@ -36,8 +36,10 @@ SharingWishVault.VaultCreated.handler(async ({ event, context }) => {
     message: event.params.message,
     totalAmount: BigInt(0),
     totalClaimedAmount: BigInt(0),
-    createdAt: event.block.timestamp,
-    updatedAt: event.block.timestamp,
+    token: event.params.token,
+    lockTime: BigInt(0), // Default lock time
+    createdAt: BigInt(event.block.timestamp),
+    updatedAt: BigInt(event.block.timestamp),
   };
 
   context.Vault.set(vault);
@@ -45,25 +47,28 @@ SharingWishVault.VaultCreated.handler(async ({ event, context }) => {
 
 SharingWishVault.FundsDonated.handler(async ({ event, context }) => {
   const vaultId = event.params.vaultId.toString();
-  const vault = await context.Vault.get(vaultId);
+  const existingVault = await context.Vault.get(vaultId);
 
-  if (vault) {
-    // Update vault
-    vault.token = event.params.token;
-    vault.totalAmount = vault.totalAmount + event.params.amount;
-    vault.updatedAt = event.block.timestamp;
+  if (existingVault) {
+    // Create updated vault
+    const vault = {
+      ...existingVault,
+      token: event.params.token,
+      totalAmount: existingVault.totalAmount + event.params.amount,
+      updatedAt: BigInt(event.block.timestamp),
+    };
     context.Vault.set(vault);
 
     // Create donation record
     const donation = {
-      id: `${event.transactionHash}-${event.logIndex}`,
-      vault: vaultId,
+      id: `${vaultId}-${event.transaction.hash}-${event.logIndex}`,
+      vault_id: vaultId,
       donor: event.params.donor,
       token: event.params.token,
       amount: event.params.amount,
-      blockNumber: event.block.number,
-      timestamp: event.block.timestamp,
-      transactionHash: event.transactionHash,
+      blockNumber: BigInt(event.block.number),
+      timestamp: BigInt(event.block.timestamp),
+      transactionHash: event.transaction.hash,
     };
 
     context.Donation.set(donation);
@@ -76,14 +81,14 @@ SharingWishVault.VaultSettled.handler(async ({ event, context }) => {
 
   if (vault) {
     const settlement = {
-      id: `${event.transactionHash}-${event.logIndex}`,
-      vault: vaultId,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      vault_id: vaultId,
       claimer: event.params.claimer,
       token: event.params.token,
       maxClaimableAmount: event.params.maxClaimableAmount,
-      blockNumber: event.block.number,
-      timestamp: event.block.timestamp,
-      transactionHash: event.transactionHash,
+      blockNumber: BigInt(event.block.number),
+      timestamp: BigInt(event.block.timestamp),
+      transactionHash: event.transaction.hash,
     };
 
     context.Settlement.set(settlement);
@@ -92,25 +97,28 @@ SharingWishVault.VaultSettled.handler(async ({ event, context }) => {
 
 SharingWishVault.FundsClaimed.handler(async ({ event, context }) => {
   const vaultId = event.params.vaultId.toString();
-  const vault = await context.Vault.get(vaultId);
+  const existingVault = await context.Vault.get(vaultId);
 
-  if (vault) {
+  if (existingVault) {
     // Update vault
-    vault.totalAmount = vault.totalAmount - event.params.amount;
-    vault.totalClaimedAmount = vault.totalClaimedAmount + event.params.amount;
-    vault.updatedAt = event.block.timestamp;
+    const vault = {
+      ...existingVault,
+      totalAmount: existingVault.totalAmount - event.params.amount,
+      totalClaimedAmount: existingVault.totalClaimedAmount + event.params.amount,
+      updatedAt: BigInt(event.block.timestamp),
+    };
     context.Vault.set(vault);
 
     // Create claim record
     const claim = {
-      id: `${event.transactionHash}-${event.logIndex}`,
-      vault: vaultId,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      vault_id: vaultId,
       claimer: event.params.claimer,
       token: event.params.token,
       amount: event.params.amount,
-      blockNumber: event.block.number,
-      timestamp: event.block.timestamp,
-      transactionHash: event.transactionHash,
+      blockNumber: BigInt(event.block.number),
+      timestamp: BigInt(event.block.timestamp),
+      transactionHash: event.transaction.hash,
     };
 
     context.Claim.set(claim);
@@ -119,24 +127,27 @@ SharingWishVault.FundsClaimed.handler(async ({ event, context }) => {
 
 SharingWishVault.FundsWithdrawn.handler(async ({ event, context }) => {
   const vaultId = event.params.vaultId.toString();
-  const vault = await context.Vault.get(vaultId);
+  const existingVault = await context.Vault.get(vaultId);
 
-  if (vault) {
+  if (existingVault) {
     // Update vault
-    vault.totalAmount = vault.totalAmount - event.params.amount;
-    vault.updatedAt = event.block.timestamp;
+    const vault = {
+      ...existingVault,
+      totalAmount: existingVault.totalAmount - event.params.amount,
+      updatedAt: BigInt(event.block.timestamp),
+    };
     context.Vault.set(vault);
 
     // Create withdrawal record
     const withdrawal = {
-      id: `${event.transactionHash}-${event.logIndex}`,
-      vault: vaultId,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      vault_id: vaultId,
       withdrawer: event.params.withdrawer,
       token: event.params.token,
       amount: event.params.amount,
-      blockNumber: event.block.number,
-      timestamp: event.block.timestamp,
-      transactionHash: event.transactionHash,
+      blockNumber: BigInt(event.block.number),
+      timestamp: BigInt(event.block.timestamp),
+      transactionHash: event.transaction.hash,
     };
 
     context.Withdrawal.set(withdrawal);
