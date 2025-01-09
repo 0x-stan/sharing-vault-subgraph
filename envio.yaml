@@ -1,0 +1,16 @@
+name: sharing-wish-vault
+description: Subgraph for Sharing Wish Vault contract
+networks:
+  - id: 1
+    start_block: 0
+    contracts:
+      - name: SharingWishVault
+        address: "0x0000000000000000000000000000000000000000" # Replace with actual contract address
+        abi: sharing-wish-vault/abi/SharingWishVault.json
+        handler: ./src/EventHandlers.ts
+        events:
+          - event: "VaultCreated(uint256,address,string)"
+          - event: "FundsDonated(uint256,address,address,uint256)"
+          - event: "VaultSettled(uint256,address,address,uint256)"
+          - event: "FundsClaimed(uint256,address,address,uint256)"
+          - event: "FundsWithdrawn(uint256,address,address,uint256)"
