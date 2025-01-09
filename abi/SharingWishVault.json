@@ -288,6 +288,12 @@
             },
             {
                 "indexed": false,
+                "internalType": "uint256",
+                "name": "lockTime",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
                 "internalType": "string",
                 "name": "message",
                 "type": "string"

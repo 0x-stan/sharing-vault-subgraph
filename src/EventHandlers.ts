@@ -37,7 +37,7 @@ SharingWishVault.VaultCreated.handler(async ({ event, context }) => {
     totalAmount: BigInt(0),
     totalClaimedAmount: BigInt(0),
     token: event.params.token,
-    lockTime: BigInt(0), // Default lock time
+    lockTime: BigInt(event.params.lockTime),
     createdAt: BigInt(event.block.timestamp),
     updatedAt: BigInt(event.block.timestamp),
   };
