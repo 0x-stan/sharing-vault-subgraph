@@ -617,6 +617,11 @@
                 "internalType": "uint256",
                 "name": "maxClaimableAmount",
                 "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "autoClaim",
+                "type": "bool"
             }
         ],
         "name": "settle",
