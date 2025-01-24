@@ -94,11 +94,6 @@
     },
     {
         "inputs": [],
-        "name": "MessageAlreadyExists",
-        "type": "error"
-    },
-    {
-        "inputs": [],
         "name": "NoFundsToClaim",
         "type": "error"
     },
@@ -143,6 +138,11 @@
     {
         "inputs": [],
         "name": "TokenNotAllowed",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "VaultAlreadyExists",
         "type": "error"
     },
     {
@@ -652,25 +652,6 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "name": "messageToVaultId",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [],
         "name": "owner",
         "outputs": [
@@ -772,7 +753,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "vaults",
+        "name": "vaultById",
         "outputs": [
             {
                 "internalType": "address",
