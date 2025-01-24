@@ -2,11 +2,11 @@
 name: envio-indexer
 networks:
 - id: 11155420
-  start_block: 22920754
+  start_block: 22959949
   contracts:
   - name: SharingWishVault
     address:
-    - 0xd9A321d46470704FF21E35E01793E66101441994
+    - 0xDe4Bebd76ae87C831Dad5b53fd2fC8757F63eD28
     handler: src/EventHandlers.ts
     events:
     - event: EmergencyModeToggled(bool mode)
