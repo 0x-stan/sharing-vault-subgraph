@@ -6,7 +6,7 @@ networks:
   contracts:
   - name: SharingWishVault
     address:
-    - 0x322De6b6Bb1f3e24cc28FD833296D8EE93DA6F49
+    - 0x765278450757f25330169a648CB6478909003283
     handler: src/EventHandlers.ts
     events:
     - event: EmergencyModeToggled(bool mode)
