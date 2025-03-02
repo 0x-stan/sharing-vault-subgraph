@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=./node_modules/envio/evm.schema.json
 name: envio-indexer
 networks:
-- id: 11155420
-  start_block: 24391448
+- id: 10
+  start_block: 132659064
   contracts:
   - name: SharingWishVault
     address:
-    - 0x765278450757f25330169a648CB6478909003283
+    - 0xb2012522f8aD0f90CA1A30c903B5993c4fAB301A
     handler: src/EventHandlers.ts
     events:
     - event: EmergencyModeToggled(bool mode)
